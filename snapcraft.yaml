@@ -33,14 +33,20 @@ architectures:
 
 apps:
   s4a:
-    extensions:
-      - gnome-3-28
     command: s4a
+    environment:
+      LC_ALL: "C.UTF-8"
+      # Fallback to XWayland if running in a Wayland session.
+      DISABLE_WAYLAND: 1
+    command-chain:
+      - bin/launcher
+      - bin/desktop-launch
     plugs:
+    - x11
     - unity7
     - home
     - network
-    - serial-port
+    - raw-usb
 
 parts:
   i386:
@@ -49,33 +55,69 @@ parts:
       sudo dpkg --add-architecture i386
       sudo apt-get update  
   s4a:
-    after: [i386]
+    after: 
+      - i386
+      - glib-only
     plugin: dump
     source: http://s4a.cat/downloads/S4A16.deb
     source-type: deb
     stage-packages:
-      - lib32z1
-      - lib32ncurses5
-      - "libsm6:i386"
-      - "scratch:i386"
-      - "squeak-vm:i386"
-      - "libpulse0:i386"
+      - libsm6:i386
+      - squeak-vm:i386
+      - libatk1.0-0:i386
+      - libbsd0:i386
+      - libc6:i386
+      - libcairo2:i386
+      - libgcc1:i386
+      - libgdk-pixbuf2.0-0:i386
+      - libglib2.0-0:i386
+      - libglu1-mesa:i386
+      - libgtk2.0-0:i386
+      - libpango-1.0-0:i386
+      - libpulse0:i386
+      - libx11-6:i386
+      - libxau6:i386
+      - libxcb1:i386
+      - libxdmcp6:i386
+      - libxml2:i386
+      - libxrandr2:i386
+    override-build: |
+      snapcraftctl build
+      rm -rf $SNAPCRAFT_PART_INSTALL/lib/x86_64-linux-gnu
+      rm -rf $SNAPCRAFT_PART_INSTALL/usr/lib/x86_64-linux-gnu
+      rm -rf $SNAPCRAFT_PART_INSTALL/usr/share/bug
+      rm -rf $SNAPCRAFT_PART_INSTALL/usr/share/doc
+      rm -rf $SNAPCRAFT_PART_INSTALL/usr/share/doc-base
+      rm -rf $SNAPCRAFT_PART_INSTALL/usr/share/lintian
+      rm -rf $SNAPCRAFT_PART_INSTALL/usr/share/man
+  glib-only:
+    after: [i386]
+    source: https://github.com/ubuntu/snapcraft-desktop-helpers.git
+    source-subdir: glib-only
+    plugin: make
+    build-packages:
+      - libglib2.0-dev
+    stage-packages:
+      - libglib2.0-bin:i386
+  game-launcher:
+    plugin: dump
+    source: scripts
+    organize:
+      'launcher': bin/
 
-# https://github.com/snapcrafters/tmnationsforever/blob/master/snapcraft.yaml
-
-  # # https://snapcraft-utils-library.readthedocs.io/en/latest/lib/cleanup.html
-  # cleanup:
-  #   after:  # Make this part run last; list all your other parts here
-  #     - s4a
-  #   plugin: nil
-  #   build-snaps:  # List all content-snaps and base snaps you're using here
-  #     - core18
-  #     - gnome-3-28-1804
-  #   override-prime: |
-  #     set -eux
-  #     for snap in "core18" "gnome-3-28-1804"; do  # List all content-snaps and base snaps you're using here
-  #       cd "/snap/$snap/current" && find . -type f,l -exec rm -f "$SNAPCRAFT_PRIME/{}" \;
-  #     done
+  # https://snapcraft-utils-library.readthedocs.io/en/latest/lib/cleanup.html
+  cleanup:
+    after:  # Make this part run last; list all your other parts here
+      - s4a
+      - glib-only
+    plugin: nil
+    build-snaps:  # List all content-snaps and base snaps you're using here
+      - core18
+    override-prime: |
+      set -eux
+      for snap in "core18"; do  # List all content-snaps and base snaps you're using here
+        cd "/snap/$snap/current" && find . -type f,l -exec rm -f "$SNAPCRAFT_PRIME/{}" \;
+      done
 
 layout:
   /usr/bin/s4a_squeak_vm:
@@ -84,5 +126,13 @@ layout:
     symlink: $SNAP/usr/lib/s4a
   /usr/lib/squeak:
     symlink: $SNAP/usr/lib/squeak
-  /usr/lib/squeak:
-    symlink: $SNAP/usr/lib/squeak
+
+plugs:
+  icon-themes:
+    interface: content
+    target: $SNAP/share/icons
+    default-provider: gtk-common-themes
+  sound-themes:
+    interface: content
+    target: $SNAP/share/sounds
+    default-provider: gtk-common-themes
