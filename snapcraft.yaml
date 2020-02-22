@@ -1,0 +1,88 @@
+name: s4a
+title: S4A
+summary: Scratch for Arduino boards
+version: "1.6"
+description: |
+  S4A is a Scratch modification that allows for simple programming of the Arduino open source hardware platform. It provides new blocks for managing sensors and actuators connected to Arduino. There is also a sensors report board similar to the PicoBoard one.
+
+  The main aim of the project is attracting people to the programming world. The goal is also to provide a high level interface to Arduino programmers with functionalities such as interacting with a set of boards through user events.
+
+  **Supported boards**
+  
+  * Arduino Diecimila
+  * Arduino Duemilanove
+  * Arduino Uno
+
+  *Other boards have not been tested but might also work*
+
+  **Connectivity**
+
+  Components have to be connected in a particular way. S4A allows for 6 analog inputs (analog pins), 2 digital inputs (digital pins 2 and 3), 3 analog outputs (digital pins 5, 6 and 9), 3 digital outputs (pins 10, 11 and 13) and 4 special outputs to connect Parallax continuous rotation servomotors (digital pins 4, 7, 8 and 12).
+
+  You can manage a board wirelessly by attaching an RF module to it, such as Xbee.
+
+  S4A allows you to control as many boards as USB ports you have. 
+license: MIT
+
+base: core18
+confinement: strict
+
+architectures:
+ - build-on: amd64
+   run-on:   amd64
+
+apps:
+  s4a:
+    extensions:
+      - gnome-3-28
+    command: s4a
+    plugs:
+    - unity7
+    - home
+    - network
+    - serial-port
+
+parts:
+  i386:
+    plugin: nil
+    override-build: |
+      sudo dpkg --add-architecture i386
+      sudo apt-get update  
+  s4a:
+    after: [i386]
+    plugin: dump
+    source: http://s4a.cat/downloads/S4A16.deb
+    source-type: deb
+    stage-packages:
+      - lib32z1
+      - lib32ncurses5
+      - "libsm6:i386"
+      - "scratch:i386"
+      - "squeak-vm:i386"
+      - "libpulse0:i386"
+
+# https://github.com/snapcrafters/tmnationsforever/blob/master/snapcraft.yaml
+
+  # # https://snapcraft-utils-library.readthedocs.io/en/latest/lib/cleanup.html
+  # cleanup:
+  #   after:  # Make this part run last; list all your other parts here
+  #     - s4a
+  #   plugin: nil
+  #   build-snaps:  # List all content-snaps and base snaps you're using here
+  #     - core18
+  #     - gnome-3-28-1804
+  #   override-prime: |
+  #     set -eux
+  #     for snap in "core18" "gnome-3-28-1804"; do  # List all content-snaps and base snaps you're using here
+  #       cd "/snap/$snap/current" && find . -type f,l -exec rm -f "$SNAPCRAFT_PRIME/{}" \;
+  #     done
+
+layout:
+  /usr/bin/s4a_squeak_vm:
+    symlink: $SNAP/usr/bin/s4a_squeak_vm
+  /usr/lib/s4a:
+    symlink: $SNAP/usr/lib/s4a
+  /usr/lib/squeak:
+    symlink: $SNAP/usr/lib/squeak
+  /usr/lib/squeak:
+    symlink: $SNAP/usr/lib/squeak
