@@ -35,7 +35,7 @@ description: |
 
   You can manage a board wirelessly by attaching an RF module to it, such as Xbee.
 
-  S4A allows you to control as many boards as USB ports you have. 
+  S4A allows you to control as many boards as USB ports you have.
 license: MIT
 
 base: core18
@@ -61,6 +61,7 @@ apps:
       - home
       - network
       - raw-usb
+      - serial-port
       - audio-playback
       - audio-record
       - camera
@@ -81,7 +82,6 @@ parts:
     source-type: deb
     stage-packages:
       - libsm6:i386
-      - squeak-vm:i386
       - libatk1.0-0:i386
       - libbsd0:i386
       - libc6:i386
@@ -111,6 +111,9 @@ parts:
       rm -rf $SNAPCRAFT_PART_INSTALL/usr/share/doc-base
       rm -rf $SNAPCRAFT_PART_INSTALL/usr/share/lintian
       rm -rf $SNAPCRAFT_PART_INSTALL/usr/share/man
+    stage:
+      - -usr/bin/update-mime-database
+
   glib-only:
     after: [i386]
     source: https://github.com/ubuntu/snapcraft-desktop-helpers.git
@@ -120,6 +123,7 @@ parts:
       - libglib2.0-dev
     stage-packages:
       - libglib2.0-bin:i386
+      - shared-mime-info:i386
   launcher:
     plugin: dump
     source: scripts
