@@ -15,6 +15,10 @@ description: |
 
   > `sudo snap connect s4a:raw-usb`
 
+  > `sudo snap connect s4a:audio-record`
+
+  > `sudo snap connect s4a:camera`
+
   Now restart your computer and you're good to go!
 
   **Supported boards**
@@ -57,6 +61,9 @@ apps:
       - home
       - network
       - raw-usb
+      - audio-playback
+      - audio-record
+      - camera
     desktop: usr/share/applications/s4a.desktop
 
 parts:
@@ -92,6 +99,7 @@ parts:
       - libxdmcp6:i386
       - libxml2:i386
       - libxrandr2:i386
+      - libv4l-0:i386
     override-build: |
       snapcraftctl build
       sed -i 's|Icon=s4a|Icon=${SNAP}/usr/share/icons/hicolor/128x128/apps/s4a.png|' ${SNAPCRAFT_PART_INSTALL}/usr/share/applications/s4a.desktop
