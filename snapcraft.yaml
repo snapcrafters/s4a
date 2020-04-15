@@ -13,13 +13,13 @@ description: |
 
   > `sudo usermod -a -G dialout $USER`
 
-  > `sudo snap connect s4a:raw-usb`
+  Now restart your computer and you're good to go!
+
+  S4A can also use recorded sounds and images from the webcam in programs. In order to use this, you also need to run the following commands. 
 
   > `sudo snap connect s4a:audio-record`
 
   > `sudo snap connect s4a:camera`
-
-  Now restart your computer and you're good to go!
 
   **Supported boards**
   
