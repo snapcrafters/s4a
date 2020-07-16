@@ -1,5 +1,5 @@
 name: s4a
-title: S4A
+title: S4A - Scratch for Arduino
 summary: Scratch for Arduino boards
 version: "1.6"
 description: |
@@ -53,7 +53,6 @@ apps:
       # Fallback to XWayland if running in a Wayland session.
       DISABLE_WAYLAND: 1
     command-chain:
-      - bin/launcher
       - bin/desktop-launch
     plugs:
       - x11
@@ -124,11 +123,6 @@ parts:
     stage-packages:
       - libglib2.0-bin:i386
       - shared-mime-info:i386
-  launcher:
-    plugin: dump
-    source: scripts
-    organize:
-      'launcher': bin/
 
   # https://snapcraft-utils-library.readthedocs.io/en/latest/lib/cleanup.html
   cleanup:
