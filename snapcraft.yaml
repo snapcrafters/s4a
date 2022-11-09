@@ -37,6 +37,11 @@ description: |
 
   S4A allows you to control as many boards as USB ports you have.
 license: MIT
+website: http://s4a.cat/
+contact: https://github.com/snapcrafters/s4a/issues
+issues: https://github.com/snapcrafters/s4a/issues
+source-code: https://github.com/snapcrafters/s4a
+icon: snap/gui/s4a.png
 
 base: core18
 confinement: strict
